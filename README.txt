@@ -1,1 +1,1 @@
-Puddleplop is a work-in-progress 16-bit Unity game about a little frog!
+A 16-bit Unity game about a little gardener frog.
