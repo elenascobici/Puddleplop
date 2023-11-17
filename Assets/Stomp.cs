@@ -5,6 +5,9 @@ using UnityEngine;
 public class Stomp : MonoBehaviour
 {
     Animator animator;
+    private int stompCount = 0;
+    private int stompsTotal = 5;
+    private bool isPlaying = false;
 
     // Start is called before the first frame update
     void Start()
@@ -15,25 +18,21 @@ public class Stomp : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey("t")) {
-            switch (animator.GetInteger("Direction")) {
-                case 0:
-                    animator.Play("StompBack");
-                    break;
-                case 90:
-                case 270:
-                    animator.Play("StompSide");
-                    break;
-                case 180:
-                    animator.Play("StompFront");
-                    break;
-                default:
-                    break;
-            }
-            animator.SetBool("Stomping", true);
+        if (Input.GetKey("t") && stompCount < 5 && !isPlaying) {
+            StartCoroutine("PlayStompAnimation");            
         }
-        else {
-            animator.SetBool("Stomping", false);
+    }
+
+    IEnumerator PlayStompAnimation() {
+        animator.SetBool("Stomping", true);
+
+        while (stompCount < stompsTotal) {
+            animator.SetTrigger("StompTrigger");
+            stompCount++;
+            yield return new WaitForSeconds(animator.GetCurrentAnimatorClipInfo(0).Length);
         }
+        
+        animator.SetBool("Stomping", false);
+        stompCount = 0;
     }
 }
