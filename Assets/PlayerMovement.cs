@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+// using System.Globalization;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -8,6 +9,14 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D body;
     private const int WalkSpeed = 5;
     private string currentState;
+    private bool isStomping = false;
+    private System.DateTime stompEndTime;
+    private enum Direction {
+        Front,
+        Back,
+        Side,
+    };
+    private Direction currentDirection = Direction.Front;
 
     // Animation name constants
     private string IDLE_FRONT = "IdleFront";
@@ -16,6 +25,9 @@ public class PlayerMovement : MonoBehaviour
     private string BOUNCE_FRONT = "BounceFront";
     private string BOUNCE_SIDE = "BounceSide";
     private string BOUNCE_BACK = "BounceBack";
+    private string STOMP_FRONT = "StompFront";
+    private string STOMP_SIDE = "StompSide";
+    private string STOMP_BACK = "StompBack";
 
     // Keyboard inputs
     private float xAxis;
@@ -31,33 +43,48 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        xAxis = Input.GetAxisRaw("Horizontal");
-        yAxis = Input.GetAxisRaw("Vertical");
-
-        // Normalize the vector to ensure that the player doesn't
-        // move faster diagonally.
-        Vector2 input = new Vector2(xAxis, yAxis).normalized;
-        Vector2 movement = input * WalkSpeed;
-        body.velocity = movement;
+        if (Input.GetKeyDown("space") && !isStomping) {
+            stompEndTime = System.DateTime.Now.AddSeconds(1.5);
+            isStomping = true;
+            // Stop moving
+            body.velocity = new Vector2(0, 0);
+        }
 
         // Control player movement and animation
+        if (!isStomping) {
+            xAxis = Input.GetAxisRaw("Horizontal");
+            yAxis = Input.GetAxisRaw("Vertical");
 
-        if (xAxis < 0) {
-            transform.localScale = new Vector2(-1, 1);
-            ChangeAnimationState(BOUNCE_SIDE);
-        }
-        else if (xAxis > 0) {
-            transform.localScale = new Vector2(1, 1);
-            ChangeAnimationState(BOUNCE_SIDE);
-        }
-        else if (yAxis < 0) { 
-            ChangeAnimationState(BOUNCE_FRONT);
-        }
-        else if (yAxis > 0) {
-            ChangeAnimationState(BOUNCE_BACK);
+            // Normalize the vector to ensure that the player doesn't
+            // move faster diagonally.
+            Vector2 input = new Vector2(xAxis, yAxis).normalized;
+            Vector2 movement = input * WalkSpeed;
+            body.velocity = movement;
+
+            if (xAxis < 0) {
+                transform.localScale = new Vector2(-1, 1);
+                ChangeAnimationState(BOUNCE_SIDE);
+                currentDirection = Direction.Side;
+            }
+            else if (xAxis > 0) {
+                transform.localScale = new Vector2(1, 1);
+                ChangeAnimationState(BOUNCE_SIDE);
+                currentDirection = Direction.Side;
+            }
+            else if (yAxis < 0) { 
+                ChangeAnimationState(BOUNCE_FRONT);
+                currentDirection = Direction.Front;
+            }
+            else if (yAxis > 0) {
+                ChangeAnimationState(BOUNCE_BACK);
+                currentDirection = Direction.Back;
+            }
+            else {
+                GoToIdle();
+            }
         }
         else {
-            GoToIdle();
+            GoToStomp();
         }
     }
 
@@ -68,14 +95,31 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void GoToIdle() {
-        if (currentState == BOUNCE_FRONT) {
+        if (currentDirection == Direction.Front) {
             ChangeAnimationState(IDLE_FRONT);
         }
-        else if (currentState == BOUNCE_SIDE) {
+        else if (currentDirection == Direction.Side) {
             ChangeAnimationState(IDLE_SIDE);
         }
-        else if (currentState == BOUNCE_BACK) {
+        else if (currentDirection == Direction.Back) {
             ChangeAnimationState(IDLE_BACK);
+        }
+    }
+
+    void GoToStomp() {
+        if (System.DateTime.Now < stompEndTime) {
+            if (currentDirection == Direction.Front) {
+                ChangeAnimationState(STOMP_FRONT);
+            }
+            else if (currentDirection == Direction.Side) {
+                ChangeAnimationState(STOMP_SIDE);
+            }
+            else if (currentDirection == Direction.Back) {
+                ChangeAnimationState(STOMP_BACK);
+            }
+        }
+        else {
+            isStomping = false;
         }
     }
 }
