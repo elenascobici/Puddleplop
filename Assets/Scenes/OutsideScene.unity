@@ -4214,6 +4214,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   soilTile: {fileID: 11400000, guid: 1bc02aff8b1373842a8d4ea99001ebb7, type: 2}
+  grassTile: {fileID: 11400000, guid: 4b0ec2d421e63594baa8ca90d63e96c7, type: 2}
   tileMap: {fileID: 2028085729}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
