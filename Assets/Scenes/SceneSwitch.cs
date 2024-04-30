@@ -6,6 +6,16 @@ using UnityEngine.SceneManagement;
 public class SceneSwitchScript : MonoBehaviour
 {
     void OnTriggerEnter2D(Collider2D other) {
-        SceneManager.LoadScene(1);
+        switch (this.gameObject.name) {
+            case "ShopExteriorDoor":
+                SceneManager.LoadScene("ShopScene");
+                break;
+            case "MarketPathCollider":
+                SceneManager.LoadScene("MarketScene");
+                break;
+            default:
+                break;
+        }
+
     }
 }
