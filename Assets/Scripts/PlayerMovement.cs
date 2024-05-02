@@ -31,12 +31,21 @@ public class PlayerMovement : MonoBehaviour
     // Keyboard inputs
     private float xAxis;
     private float yAxis;
+    private Camera mainCamera;
+
+    // Camera-related and world bounds.
+    private float cameraX;
+    private const float MIN_X = -7.5F;
+    private const float MAX_X = 18.5F;
+    const int WIDTH = 14;
 
     // Start is called before the first frame update
     void Start()
     {
         animator = GetComponent<Animator>();
         body = GetComponent<Rigidbody2D>();
+        mainCamera = Camera.main;
+        cameraX = 0;
     }
 
     // Update is called once per frame
@@ -57,8 +66,9 @@ public class PlayerMovement : MonoBehaviour
             // Normalize the vector to ensure that the player doesn't
             // move faster diagonally.
             Vector2 input = new Vector2(xAxis, yAxis).normalized;
-            Vector2 movement = input * WalkSpeed;
-            body.velocity = movement;
+            Vector2 newPosition = transform.position + new Vector3(input.x * WalkSpeed * Time.deltaTime, input.y * WalkSpeed * Time.deltaTime, 0);
+            newPosition.x = Mathf.Clamp(newPosition.x, MIN_X, MAX_X);
+            transform.position = newPosition;
 
             if (xAxis < 0) {
                 transform.localScale = new Vector2(-1, 1);
@@ -84,6 +94,12 @@ public class PlayerMovement : MonoBehaviour
         }
         else {
             GoToStomp();
+        }
+
+        // Move camera to follow player if needed.
+        cameraX = transform.position.x;
+        if (cameraX >= 0 && cameraX < MAX_X - 7.5) {
+            mainCamera.transform.position = new Vector3(transform.position.x, mainCamera.transform.position.y, mainCamera.transform.position.z);
         }
     }
 

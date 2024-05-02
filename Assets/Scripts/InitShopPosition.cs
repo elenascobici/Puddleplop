@@ -19,9 +19,4 @@ public class InitPosition : MonoBehaviour
         storePosition.x += tileMap.cellSize.x * 2;
         storeTransform.position = storePosition;
     }
-
-    void Update()
-    {
-        UpdateStorePosition();
-    }
 }
