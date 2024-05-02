@@ -37,7 +37,8 @@ public class PlayerMovement : MonoBehaviour
     private float cameraX;
     private const float MIN_X = -7.5F;
     private const float MAX_X = 18.5F;
-    const int WIDTH = 14;
+    private const float MIN_Y = -4.5F;
+    private const float MAX_Y = 3.8F;
 
     // Start is called before the first frame update
     void Start()
@@ -67,8 +68,18 @@ public class PlayerMovement : MonoBehaviour
             // move faster diagonally.
             Vector2 input = new Vector2(xAxis, yAxis).normalized;
             Vector2 newPosition = transform.position + new Vector3(input.x * WalkSpeed * Time.deltaTime, input.y * WalkSpeed * Time.deltaTime, 0);
+            // Clamp player's coordinates so they can't go over the
+            // bounds of the world.
             newPosition.x = Mathf.Clamp(newPosition.x, MIN_X, MAX_X);
+            newPosition.y = Mathf.Clamp(newPosition.y, MIN_Y, MAX_Y);
             transform.position = newPosition;
+
+            // Move camera to follow player if needed, also clamping
+            // to not go over bounds.
+            cameraX = transform.position.x;
+            Vector3 newCameraPosition = new Vector3(transform.position.x, mainCamera.transform.position.y, mainCamera.transform.position.z);
+            newCameraPosition.x = Mathf.Clamp(newCameraPosition.x, 0, MAX_X - 7.5F);
+            mainCamera.transform.position = newCameraPosition;
 
             if (xAxis < 0) {
                 transform.localScale = new Vector2(-1, 1);
@@ -94,12 +105,6 @@ public class PlayerMovement : MonoBehaviour
         }
         else {
             GoToStomp();
-        }
-
-        // Move camera to follow player if needed.
-        cameraX = transform.position.x;
-        if (cameraX >= 0 && cameraX < MAX_X - 7.5) {
-            mainCamera.transform.position = new Vector3(transform.position.x, mainCamera.transform.position.y, mainCamera.transform.position.z);
         }
     }
 
