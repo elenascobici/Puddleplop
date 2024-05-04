@@ -12,7 +12,7 @@ public class GroundEdit : MonoBehaviour
     public RuleTile soilTile;
     public Tilemap tileMap;
     private bool soilMode = true;
-    private TileBase[,] initTileArray = new TileBase[WIDTH, HEIGHT];
+    private TileBase[,] initTileArray = new TileBase[WIDTH+1, HEIGHT];
 
     // Define the corners of the area in which the player can place
     // soil.
@@ -22,7 +22,7 @@ public class GroundEdit : MonoBehaviour
     void Start() {
         // Record the initial grass tiles, so that we can replace
         // soil tiles with the grass tile that were there before.
-        for (int i = 0; i < WIDTH; i++) {
+        for (int i = 0; i <= WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
                 initTileArray[i, j] = tileMap.GetTile(new Vector3Int(i - WIDTH/2, j - HEIGHT/2, 0));
             }
