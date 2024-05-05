@@ -7,6 +7,9 @@ using UnityEngine.Tilemaps;
 
 public class GroundEdit : MonoBehaviour
 {
+    // Reference to the ground editing toggle script so we can
+    // check whether ground editing has been enabled.
+    public GroundEditButtonScript groundEditButtonScript;
     const int WIDTH = 14;
     const int HEIGHT = 8;
     public RuleTile soilTile;
@@ -34,7 +37,7 @@ public class GroundEdit : MonoBehaviour
         // As soon as left button is clicked, record whether a
         // grass or soil tile has been clicked to determine whether
         // we are in soil tile mode or grass tile mode.
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0) && groundEditButtonScript.groundEditEnabled) {
             Vector3 worldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             var tpos = tileMap.WorldToCell(worldPoint);
             var tile = tileMap.GetTile(tpos);
@@ -42,10 +45,9 @@ public class GroundEdit : MonoBehaviour
         }
         // While user holds and drags left click button, update all
         // tiles based on mode.
-        if (Input.GetMouseButton(0)) {
+        if (Input.GetMouseButton(0) && groundEditButtonScript.groundEditEnabled) {
             Vector3 worldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             var tpos = tileMap.WorldToCell(worldPoint);
-            Debug.Log(tpos);
 
             // Only edit the ground within the given bounds.
             if (InBounds(tpos)) {
