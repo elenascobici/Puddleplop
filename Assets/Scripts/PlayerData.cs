@@ -5,6 +5,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using Newtonsoft.Json;
 
 public class UserData : MonoBehaviour
 {
@@ -13,7 +15,9 @@ public class UserData : MonoBehaviour
  
     void Start()
     {
-        data = DeserializeData(USER_DATA_PATH);
+        data = new Dictionary<string, string>();
+        //data = DeserializeData(USER_DATA_PATH);
+        data = ReadFromFile(USER_DATA_PATH);
         // Uncomment the following line to clear out the user's
         // data and set all needed values to their defaults.
         // ResetData();
@@ -22,8 +26,28 @@ public class UserData : MonoBehaviour
  
     public void SaveData()
     {
-        SerializeData(data, USER_DATA_PATH);
+        //SerializeData(data, USER_DATA_PATH);
+        WriteToFile(data, USER_DATA_PATH);
     }
+
+    public void SaveKeyAndValue(string key, string value) {
+        data[key] = value;
+        SaveData();
+    }
+
+    public static void WriteToFile(Dictionary<string, string> data, string path) {
+        File.WriteAllText(path, JsonConvert.SerializeObject(data));
+    }
+
+    public static Dictionary<string, string> ReadFromFile(string path) {
+        if (File.Exists(path)) {
+            string dataString = File.ReadAllText(path);
+            return JsonConvert.DeserializeObject<Dictionary<string, string>>(dataString);
+        } else {
+            return new Dictionary<string, string>();
+        }
+    }
+
     public static void SerializeData(Dictionary<string, string> data, string path)
     {
         FileStream fs = new FileStream(path, FileMode.OpenOrCreate);

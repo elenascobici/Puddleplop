@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-
+using Newtonsoft.Json;
 public class GroundEdit : MonoBehaviour
 {
     // Reference to the ground editing toggle script so we can
@@ -33,9 +33,18 @@ public class GroundEdit : MonoBehaviour
                 initTileArray[i, j] = tileMap.GetTile(new Vector3Int(i - WIDTH/2, j - HEIGHT/2, 0));
             }
         }
-        string groundDataString = userData.data["soilTiles"];
-        groundData = JsonUtility.FromJson<GroundData>("{\"groundData\":" + groundDataString + "}");
-        Debug.Log(groundData.soilTiles);
+        string groundDataString = userData.data.ContainsKey("soilTiles")
+            ? userData.data["soilTiles"] : "\"\"";
+        groundData = JsonConvert.DeserializeObject<GroundData>("{\"soilTiles\":" + groundDataString + "}");
+        if (groundData.soilTiles == null) { // No soil tiles
+            groundData.soilTiles = new List<GroundCoords>();
+        }
+        else { // Otherwise, load the soil tiles visually
+            foreach (GroundCoords soilCoord in groundData.soilTiles) {
+                tileMap.SetTile(new Vector3Int(soilCoord.x, soilCoord.y,
+                    soilCoord.z), soilTile);
+            }
+        }
     }
 
 
@@ -59,10 +68,16 @@ public class GroundEdit : MonoBehaviour
             if (InBounds(tpos)) {
                 if (soilMode) {
                     tileMap.SetTile(tpos, soilTile);
+                    groundData.Add(tpos);
+                    userData.SaveKeyAndValue("soilTiles",
+                        JsonConvert.SerializeObject(groundData.soilTiles));
                 }
                 else if (!tileMap.GetTile(tpos).name.Contains("Ground")) {
                     // Replace the soil tile with the initial grass tile.
                     tileMap.SetTile(tpos, initTileArray[tpos[0] + WIDTH/2, tpos[1] + HEIGHT/2]);
+                    groundData.Remove(tpos);
+                    userData.SaveKeyAndValue("soilTiles",
+                        JsonConvert.SerializeObject(groundData.soilTiles));
                 }
             }
         }
