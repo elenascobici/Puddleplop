@@ -133,6 +133,8 @@ GameObject:
   m_Component:
   - component: {fileID: 386748890}
   - component: {fileID: 386748889}
+  - component: {fileID: 386748891}
+  - component: {fileID: 386748892}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
@@ -170,6 +172,30 @@ Transform:
   - {fileID: 2142951323}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &386748891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 386748888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a08dbbbe19a62440b882f14907976d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &386748892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 386748888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f61940a4bc27234d928dff3fccc36e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &444283164
 GameObject:
   m_ObjectHideFlags: 0
@@ -1429,6 +1455,7 @@ MonoBehaviour:
   disabledSprite: {fileID: 21300000, guid: cd936c292c6d7d549965ec5e907585db, type: 3}
   enabledSprite: {fileID: 21300000, guid: e77ab0109182a0b43ad6548a81e60e6e, type: 3}
   toggleGroundEditButton: {fileID: 1430418233}
+  groundEditEnabled: 0
 --- !u!1 &1537517930
 GameObject:
   m_ObjectHideFlags: 0
@@ -4759,6 +4786,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76003ed86f97f0a44b5146b5e946df45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  groundEditButtonScript: {fileID: 1430418236}
+  userData: {fileID: 386748891}
   soilTile: {fileID: 11400000, guid: 1bc02aff8b1373842a8d4ea99001ebb7, type: 2}
   tileMap: {fileID: 2028085729}
 --- !u!1 &2142951322

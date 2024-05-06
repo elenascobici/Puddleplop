@@ -10,26 +10,32 @@ public class GroundEdit : MonoBehaviour
     // Reference to the ground editing toggle script so we can
     // check whether ground editing has been enabled.
     public GroundEditButtonScript groundEditButtonScript;
+    public UserData userData;
+    public GroundData groundData;
     const int WIDTH = 14;
     const int HEIGHT = 8;
+    const int EDITABLE_LENGTH = 20;
     public RuleTile soilTile;
     public Tilemap tileMap;
     private bool soilMode = true;
-    private TileBase[,] initTileArray = new TileBase[WIDTH+1, HEIGHT];
+    private TileBase[,] initTileArray = new TileBase[EDITABLE_LENGTH+1, HEIGHT];
 
     // Define the corners of the area in which the player can place
     // soil.
     private Tuple<int,int,int> TOP_LEFT = Tuple.Create(2,3,0);
-    private Tuple<int,int,int> BOTTOM_RIGHT = Tuple.Create(7,-4,0);
+    private Tuple<int,int,int> BOTTOM_RIGHT = Tuple.Create(13,-4,0);
 
     void Start() {
         // Record the initial grass tiles, so that we can replace
         // soil tiles with the grass tile that were there before.
-        for (int i = 0; i <= WIDTH; i++) {
+        for (int i = 0; i <= EDITABLE_LENGTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
                 initTileArray[i, j] = tileMap.GetTile(new Vector3Int(i - WIDTH/2, j - HEIGHT/2, 0));
             }
         }
+        string groundDataString = userData.data["soilTiles"];
+        groundData = JsonUtility.FromJson<GroundData>("{\"groundData\":" + groundDataString + "}");
+        Debug.Log(groundData.soilTiles);
     }
 
 
