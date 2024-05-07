@@ -134,7 +134,6 @@ GameObject:
   - component: {fileID: 386748890}
   - component: {fileID: 386748889}
   - component: {fileID: 386748891}
-  - component: {fileID: 386748892}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
@@ -182,18 +181,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6a08dbbbe19a62440b882f14907976d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &386748892
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 386748888}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f61940a4bc27234d928dff3fccc36e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &444283164
@@ -4788,6 +4775,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   groundEditButtonScript: {fileID: 1430418236}
   userData: {fileID: 386748891}
+  groundData:
+    soilTiles: []
+  frog: {fileID: 444283164}
   soilTile: {fileID: 11400000, guid: 1bc02aff8b1373842a8d4ea99001ebb7, type: 2}
   tileMap: {fileID: 2028085729}
 --- !u!1 &2142951322

@@ -52,35 +52,34 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown("space") && !isStomping) {
-            stompEndTime = System.DateTime.Now.AddSeconds(1.5);
+        if (Input.GetKeyDown("q") && !isStomping) {
+            stompEndTime = System.DateTime.Now.AddSeconds(0.5);
             isStomping = true;
-            // Stop moving
-            body.velocity = new Vector2(0, 0);
         }
 
-        // Control player movement and animation
+        // Player movement.
+        xAxis = Input.GetAxisRaw("Horizontal");
+        yAxis = Input.GetAxisRaw("Vertical");
+
+        // Normalize the vector to ensure that the player doesn't
+        // move faster diagonally.
+        Vector2 input = new Vector2(xAxis, yAxis).normalized;
+        Vector2 newPosition = transform.position + new Vector3(input.x * WalkSpeed * Time.deltaTime, input.y * WalkSpeed * Time.deltaTime, 0);
+        // Clamp player's coordinates so they can't go over the
+        // bounds of the world.
+        newPosition.x = Mathf.Clamp(newPosition.x, MIN_X, MAX_X);
+        newPosition.y = Mathf.Clamp(newPosition.y, MIN_Y, MAX_Y);
+        transform.position = newPosition;
+
+        // Move camera to follow player if needed, also clamping
+        // to not go over bounds.
+        cameraX = transform.position.x;
+        Vector3 newCameraPosition = new Vector3(transform.position.x, mainCamera.transform.position.y, mainCamera.transform.position.z);
+        newCameraPosition.x = Mathf.Clamp(newCameraPosition.x, 0, MAX_X - 7.5F);
+        mainCamera.transform.position = newCameraPosition;
+
+        // Control player animation.
         if (!isStomping) {
-            xAxis = Input.GetAxisRaw("Horizontal");
-            yAxis = Input.GetAxisRaw("Vertical");
-
-            // Normalize the vector to ensure that the player doesn't
-            // move faster diagonally.
-            Vector2 input = new Vector2(xAxis, yAxis).normalized;
-            Vector2 newPosition = transform.position + new Vector3(input.x * WalkSpeed * Time.deltaTime, input.y * WalkSpeed * Time.deltaTime, 0);
-            // Clamp player's coordinates so they can't go over the
-            // bounds of the world.
-            newPosition.x = Mathf.Clamp(newPosition.x, MIN_X, MAX_X);
-            newPosition.y = Mathf.Clamp(newPosition.y, MIN_Y, MAX_Y);
-            transform.position = newPosition;
-
-            // Move camera to follow player if needed, also clamping
-            // to not go over bounds.
-            cameraX = transform.position.x;
-            Vector3 newCameraPosition = new Vector3(transform.position.x, mainCamera.transform.position.y, mainCamera.transform.position.z);
-            newCameraPosition.x = Mathf.Clamp(newCameraPosition.x, 0, MAX_X - 7.5F);
-            mainCamera.transform.position = newCameraPosition;
-
             if (xAxis < 0) {
                 transform.localScale = new Vector2(-1, 1);
                 ChangeAnimationState(BOUNCE_SIDE);

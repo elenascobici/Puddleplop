@@ -22,4 +22,10 @@ public class GroundEditButtonScript : MonoBehaviour
             toggleGroundEditButton.image.sprite == disabledSprite 
                 ? enabledSprite : disabledSprite;
     }
+
+    void Update() {
+        if (Input.GetKeyDown("q") && !groundEditEnabled) {
+            ToggleButtonClicked();
+        }
+    }
 }
