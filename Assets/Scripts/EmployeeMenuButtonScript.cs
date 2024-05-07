@@ -83,6 +83,7 @@ public class EmployeeMenuButtonScript : MonoBehaviour
 
         // Play book closing animations step by step.
         if (state == 5) {
+            EmployeeMenuPagination.Close();
             animator.Play(closing.name);
             state = 6;
         }
