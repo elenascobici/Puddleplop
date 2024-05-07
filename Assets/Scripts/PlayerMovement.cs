@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    // Public variable that allows other objects to disable movement,
+    // for example when a menu is opened.
+    public static bool movementEnabled;
     private Animator animator;
     private Rigidbody2D body;
     private const int WalkSpeed = 5;
@@ -43,6 +46,7 @@ public class PlayerMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        movementEnabled = true;
         animator = GetComponent<Animator>();
         body = GetComponent<Rigidbody2D>();
         mainCamera = Camera.main;
@@ -52,58 +56,60 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown("q") && !isStomping) {
+        if (Input.GetKeyDown("q") && !isStomping && movementEnabled) {
             stompEndTime = System.DateTime.Now.AddSeconds(0.5);
             isStomping = true;
         }
 
         // Player movement.
-        xAxis = Input.GetAxisRaw("Horizontal");
-        yAxis = Input.GetAxisRaw("Vertical");
+        if (movementEnabled) {
+            xAxis = Input.GetAxisRaw("Horizontal");
+            yAxis = Input.GetAxisRaw("Vertical");
 
-        // Normalize the vector to ensure that the player doesn't
-        // move faster diagonally.
-        Vector2 input = new Vector2(xAxis, yAxis).normalized;
-        Vector2 newPosition = transform.position + new Vector3(input.x * WalkSpeed * Time.deltaTime, input.y * WalkSpeed * Time.deltaTime, 0);
-        // Clamp player's coordinates so they can't go over the
-        // bounds of the world.
-        newPosition.x = Mathf.Clamp(newPosition.x, MIN_X, MAX_X);
-        newPosition.y = Mathf.Clamp(newPosition.y, MIN_Y, MAX_Y);
-        transform.position = newPosition;
+            // Normalize the vector to ensure that the player doesn't
+            // move faster diagonally.
+            Vector2 input = new Vector2(xAxis, yAxis).normalized;
+            Vector2 newPosition = transform.position + new Vector3(input.x * WalkSpeed * Time.deltaTime, input.y * WalkSpeed * Time.deltaTime, 0);
+            // Clamp player's coordinates so they can't go over the
+            // bounds of the world.
+            newPosition.x = Mathf.Clamp(newPosition.x, MIN_X, MAX_X);
+            newPosition.y = Mathf.Clamp(newPosition.y, MIN_Y, MAX_Y);
+            transform.position = newPosition;
 
-        // Move camera to follow player if needed, also clamping
-        // to not go over bounds.
-        cameraX = transform.position.x;
-        Vector3 newCameraPosition = new Vector3(transform.position.x, mainCamera.transform.position.y, mainCamera.transform.position.z);
-        newCameraPosition.x = Mathf.Clamp(newCameraPosition.x, 0, MAX_X - 7.5F);
-        mainCamera.transform.position = newCameraPosition;
+            // Move camera to follow player if needed, also clamping
+            // to not go over bounds.
+            cameraX = transform.position.x;
+            Vector3 newCameraPosition = new Vector3(transform.position.x, mainCamera.transform.position.y, mainCamera.transform.position.z);
+            newCameraPosition.x = Mathf.Clamp(newCameraPosition.x, 0, MAX_X - 7.5F);
+            mainCamera.transform.position = newCameraPosition;
 
-        // Control player animation.
-        if (!isStomping) {
-            if (xAxis < 0) {
-                transform.localScale = new Vector2(-1, 1);
-                ChangeAnimationState(BOUNCE_SIDE);
-                currentDirection = Direction.Side;
-            }
-            else if (xAxis > 0) {
-                transform.localScale = new Vector2(1, 1);
-                ChangeAnimationState(BOUNCE_SIDE);
-                currentDirection = Direction.Side;
-            }
-            else if (yAxis < 0) { 
-                ChangeAnimationState(BOUNCE_FRONT);
-                currentDirection = Direction.Front;
-            }
-            else if (yAxis > 0) {
-                ChangeAnimationState(BOUNCE_BACK);
-                currentDirection = Direction.Back;
+            // Control player animation.
+            if (!isStomping) {
+                if (xAxis < 0) {
+                    transform.localScale = new Vector2(-1, 1);
+                    ChangeAnimationState(BOUNCE_SIDE);
+                    currentDirection = Direction.Side;
+                }
+                else if (xAxis > 0) {
+                    transform.localScale = new Vector2(1, 1);
+                    ChangeAnimationState(BOUNCE_SIDE);
+                    currentDirection = Direction.Side;
+                }
+                else if (yAxis < 0) { 
+                    ChangeAnimationState(BOUNCE_FRONT);
+                    currentDirection = Direction.Front;
+                }
+                else if (yAxis > 0) {
+                    ChangeAnimationState(BOUNCE_BACK);
+                    currentDirection = Direction.Back;
+                }
+                else {
+                    GoToIdle();
+                }
             }
             else {
-                GoToIdle();
+                GoToStomp();
             }
-        }
-        else {
-            GoToStomp();
         }
     }
 
