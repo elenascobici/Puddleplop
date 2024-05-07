@@ -19,7 +19,7 @@ public class EmployeeMenuButtonScript : MonoBehaviour
     private int UP_SPEED = 16;
     private int DOWN_SPEED = 7;
     public Animator animator;
-    private int state;
+    public int state;
     void Start()
     {
         openEmployeeMenuButton.onClick.AddListener(OpenEmployeeMenu);
@@ -78,6 +78,7 @@ public class EmployeeMenuButtonScript : MonoBehaviour
         else if (state == 3 && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.95) {
             animator.Play(open.name);
             state = 4;
+            EmployeeMenuPagination.Init();
         }
 
         // Play book closing animations step by step.
