@@ -74,7 +74,7 @@ public class EmployeeMenuButtonScript : MonoBehaviour
         else if (state == 2) {
             animator.Play(opening.name);
             state = 3;
-        }
+        } // Note: stop playing animation at 95% to avoid flickering.
         else if (state == 3 && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.95) {
             animator.Play(open.name);
             state = 4;
