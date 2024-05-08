@@ -9,7 +9,7 @@ public class OpenSatchelScript : MonoBehaviour
     public Sprite enabledSprite;
     public Button toggleSatchelOpenButton;
     public bool satchelOpen;
-    // Start is called before the first frame update
+    
     void Start()
     {
         satchelOpen = false;
