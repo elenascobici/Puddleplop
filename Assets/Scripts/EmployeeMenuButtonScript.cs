@@ -32,7 +32,6 @@ public class EmployeeMenuButtonScript : MonoBehaviour
     }
 
     void ToggleEmployeeMenu() {
-        Debug.Log("click!");
         if (state == 0 || state >= 5) {
             PlayerMovement.movementEnabled = false;
             closeEmployeeMenuButton.gameObject.SetActive(true);
