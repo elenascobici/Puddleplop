@@ -9,6 +9,7 @@ public class EmployeeMenuPagination : MonoBehaviour
 {
     public Button leftButton;
     public Button rightButton;
+    // public Button closeButton;
     public static Button leftButtonStatic;
     public static Button rightButtonStatic;
     private static List<TextMeshProUGUI> pages;

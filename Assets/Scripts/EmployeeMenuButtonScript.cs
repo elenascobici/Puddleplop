@@ -22,8 +22,8 @@ public class EmployeeMenuButtonScript : MonoBehaviour
     public int state;
     void Start()
     {
-        openEmployeeMenuButton.onClick.AddListener(OpenEmployeeMenu);
-        closeEmployeeMenuButton.onClick.AddListener(CloseEmployeeMenu);
+        openEmployeeMenuButton.onClick.AddListener(ToggleEmployeeMenu);
+        closeEmployeeMenuButton.gameObject.SetActive(false);
         opening.wrapMode = WrapMode.Once; // Only play opening animation once
         animator.Play(closed.name);
         state = 0;
@@ -31,22 +31,25 @@ public class EmployeeMenuButtonScript : MonoBehaviour
         darkenedSquare.color = new Color(0, 0, 0, 0);
     }
 
-    void OpenEmployeeMenu() {
+    void ToggleEmployeeMenu() {
+        Debug.Log("click!");
         if (state == 0 || state >= 5) {
             PlayerMovement.movementEnabled = false;
+            closeEmployeeMenuButton.gameObject.SetActive(true);
+            closeEmployeeMenuButton.onClick.RemoveAllListeners();
+            closeEmployeeMenuButton.onClick.AddListener(CloseEmployeeMenu);
             // Trigger book menu coming onto screen and opening.
             state = 1;
         }
-        else { // Else, treat it as closing the book.
-            PlayerMovement.movementEnabled = true;
-            state = 5;
-        }
+
     }
 
     void CloseEmployeeMenu() {
-        PlayerMovement.movementEnabled = true;
         // Trigger book menu going off screen and closing.
         state = 5;
+        PlayerMovement.movementEnabled = true;
+        closeEmployeeMenuButton.onClick.RemoveAllListeners();
+        closeEmployeeMenuButton.gameObject.SetActive(false);
     }
 
     void Update() {
