@@ -21,12 +21,12 @@ public class UserData : MonoBehaviour
         // Uncomment the following line to clear out the user's
         // data and set all needed values to their defaults.
         // ResetData();
-        Debug.Log("Data read: " + data);
     }
  
     public void SaveData()
     {
         //SerializeData(data, USER_DATA_PATH);
+        Debug.Log("Data saved: " + data);
         WriteToFile(data, USER_DATA_PATH);
     }
 
