@@ -9,11 +9,13 @@ public class InitPlayerStatsScript : MonoBehaviour
     public TextMeshProUGUI coinCount;
     public TextMeshProUGUI xpLevel;
     public Animator xpBarAnimator;
+    public XpBarScript xpBar;
     
     void Start()
     {
         xpBarAnimator.Play("Idle");
         coinCount.text = userData.data["coins"];
         xpLevel.text = userData.data["xpLevel"];
+        xpBar.Init(1);
     }
 }
