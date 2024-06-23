@@ -24,8 +24,5 @@ public class GroundEditButtonScript : MonoBehaviour
     }
 
     void Update() {
-        if (Input.GetKeyDown("q") && !groundEditEnabled) {
-            ToggleButtonClicked();
-        }
     }
 }

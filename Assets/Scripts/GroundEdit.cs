@@ -53,19 +53,17 @@ public class GroundEdit : MonoBehaviour
         // As soon as left button is clicked, record whether a
         // grass or soil tile has been clicked to determine whether
         // we are in soil tile mode or grass tile mode.
-        if (Input.GetKeyDown("q") && groundEditButtonScript.groundEditEnabled) {
-            // Vector3 worldPoint = Camera.main.ScreenToWorldPoint(frog.transform.position);
-            // var tpos = tileMap.WorldToCell(worldPoint);
-            var tpos = tileMap.WorldToCell(frog.transform.position);
+        if (Input.GetMouseButtonDown(0) && groundEditButtonScript.groundEditEnabled) {
+            Vector3 worldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            var tpos = tileMap.WorldToCell(worldPoint);
             var tile = tileMap.GetTile(tpos);
             soilMode = tile.name.Contains("Ground");
         }
         // While user holds and drags left click button, update all
         // tiles based on mode.
-        if (Input.GetKey("q") && groundEditButtonScript.groundEditEnabled) {
-            // Vector3 worldPoint = Camera.main.ScreenToWorldPoint(frog.transform.position);
-            // var tpos = tileMap.WorldToCell(worldPoint);
-            var tpos = tileMap.WorldToCell(frog.transform.position);
+        if (Input.GetMouseButton(0) && groundEditButtonScript.groundEditEnabled) {
+            Vector3 worldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            var tpos = tileMap.WorldToCell(worldPoint);
 
             // Only edit the ground within the given bounds.
             if (InBounds(tpos)) {

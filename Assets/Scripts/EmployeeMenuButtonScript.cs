@@ -40,7 +40,6 @@ public class EmployeeMenuButtonScript : MonoBehaviour
             // Trigger book menu coming onto screen and opening.
             state = 1;
         }
-
     }
 
     void CloseEmployeeMenu() {
