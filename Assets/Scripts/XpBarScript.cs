@@ -7,10 +7,17 @@ using UnityEngine.UI;
 public class XpBarScript : MonoBehaviour
 {
     public Image xPMask;
-    // Start is called before the first frame update
-    public void Init(float fillAmount)
+    private DataManager dataManager;
+    private UserData userData;
+    void Start() {
+        dataManager = DataManager.Instance;
+        userData = dataManager.GetUserData();
+        SetFillAmount(userData.xpPoints);
+    }
+
+    public void SetFillAmount(float xpPoints)
     {
-        xPMask.fillAmount = fillAmount;
+        xPMask.fillAmount = xpPoints / 100;
     }
 
     // Update is called once per frame

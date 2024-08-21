@@ -11,7 +11,6 @@ public class GroundEdit : MonoBehaviour
     // check whether ground editing has been enabled.
     public GroundEditButtonScript groundEditButtonScript;
     public UserData userData;
-    public GroundData groundData;
     public GameObject frog;
     const int WIDTH = 14;
     const int HEIGHT = 8;
@@ -34,18 +33,18 @@ public class GroundEdit : MonoBehaviour
                 initTileArray[i, j] = tileMap.GetTile(new Vector3Int(i - WIDTH/2, j - HEIGHT/2, 0));
             }
         }
-        string groundDataString = userData.data.ContainsKey("soilTiles")
-            ? userData.data["soilTiles"] : "\"\"";
-        groundData = JsonConvert.DeserializeObject<GroundData>("{\"soilTiles\":" + groundDataString + "}");
-        if (groundData.soilTiles == null) { // No soil tiles
-            groundData.soilTiles = new List<GroundCoords>();
-        }
-        else { // Otherwise, load the soil tiles visually
-            foreach (GroundCoords soilCoord in groundData.soilTiles) {
-                tileMap.SetTile(new Vector3Int(soilCoord.x, soilCoord.y,
-                    soilCoord.z), soilTile);
-            }
-        }
+        // string groundDataString = userData.data.ContainsKey("soilTiles")
+        //     ? userData.data["soilTiles"] : "\"\"";
+        // groundData = JsonConvert.DeserializeObject<GroundData>("{\"soilTiles\":" + groundDataString + "}");
+        // if (groundData.soilTiles == null) { // No soil tiles
+        //     groundData.soilTiles = new List<GroundCoords>();
+        // }
+        // else { // Otherwise, load the soil tiles visually
+        //     foreach (GroundCoords soilCoord in groundData.soilTiles) {
+        //         tileMap.SetTile(new Vector3Int(soilCoord.x, soilCoord.y,
+        //             soilCoord.z), soilTile);
+        //     }
+        // }
     }
 
 
@@ -69,16 +68,16 @@ public class GroundEdit : MonoBehaviour
             if (InBounds(tpos)) {
                 if (soilMode) {
                     tileMap.SetTile(tpos, soilTile);
-                    groundData.Add(tpos);
-                    userData.SaveKeyAndValue("soilTiles",
-                        JsonConvert.SerializeObject(groundData.soilTiles));
+                    // groundData.Add(tpos);
+                    // userData.SaveKeyAndValue("soilTiles",
+                    //     JsonConvert.SerializeObject(groundData.soilTiles));
                 }
                 else if (!tileMap.GetTile(tpos).name.Contains("Ground")) {
                     // Replace the soil tile with the initial grass tile.
                     tileMap.SetTile(tpos, initTileArray[tpos[0] + WIDTH/2, tpos[1] + HEIGHT/2]);
-                    groundData.Remove(tpos);
-                    userData.SaveKeyAndValue("soilTiles",
-                        JsonConvert.SerializeObject(groundData.soilTiles));
+                    // groundData.Remove(tpos);
+                    // userData.SaveKeyAndValue("soilTiles",
+                    //     JsonConvert.SerializeObject(groundData.soilTiles));
                 }
             }
         }
