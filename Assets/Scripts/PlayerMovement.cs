@@ -6,7 +6,7 @@ public class PlayerMovement : MonoBehaviour
 {
     // Public variable that allows other objects to disable movement,
     // for example when a menu is opened.
-    public static bool movementEnabled;
+    public bool movementEnabled;
     private Animator animator;
     private Rigidbody2D body;
     private const int WalkSpeed = 5;
@@ -42,6 +42,10 @@ public class PlayerMovement : MonoBehaviour
     private const float MAX_X = 18.5F;
     private const float MIN_Y = -4.5F;
     private const float MAX_Y = 3.8F;
+
+    public void Stop() {
+        GoToIdle();
+    }
 
     // Start is called before the first frame update
     void Start()

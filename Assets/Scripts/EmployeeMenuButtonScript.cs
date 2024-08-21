@@ -19,35 +19,18 @@ public class EmployeeMenuButtonScript : MonoBehaviour
     private int UP_SPEED = 16;
     private int DOWN_SPEED = 7;
     public Animator animator;
+    public PlayerMovement playerMovement;
     public int state;
     void Start()
     {
-        openEmployeeMenuButton.onClick.AddListener(ToggleEmployeeMenu);
+        openEmployeeMenuButton.onClick.AddListener(() => {state = 1;});
+        closeEmployeeMenuButton.onClick.AddListener(() => {state = 5;});
         closeEmployeeMenuButton.gameObject.SetActive(false);
         opening.wrapMode = WrapMode.Once; // Only play opening animation once
         animator.Play(closed.name);
         state = 0;
         squareAlpha = 0;
         darkenedSquare.color = new Color(0, 0, 0, 0);
-    }
-
-    void ToggleEmployeeMenu() {
-        if (state == 0 || state >= 5) {
-            PlayerMovement.movementEnabled = false;
-            closeEmployeeMenuButton.gameObject.SetActive(true);
-            closeEmployeeMenuButton.onClick.RemoveAllListeners();
-            closeEmployeeMenuButton.onClick.AddListener(CloseEmployeeMenu);
-            // Trigger book menu coming onto screen and opening.
-            state = 1;
-        }
-    }
-
-    void CloseEmployeeMenu() {
-        // Trigger book menu going off screen and closing.
-        state = 5;
-        PlayerMovement.movementEnabled = true;
-        closeEmployeeMenuButton.onClick.RemoveAllListeners();
-        closeEmployeeMenuButton.gameObject.SetActive(false);
     }
 
     void Update() {
@@ -67,6 +50,8 @@ public class EmployeeMenuButtonScript : MonoBehaviour
         // Play book opening animations step by step.
         if (state == 1 && menuYCoord < 1) {
             employeeMenu.transform.Translate(new Vector3(0, 1, 0) * UP_SPEED * Time.deltaTime);
+            playerMovement.movementEnabled = false;
+            playerMovement.Stop();
         }
         else if ((state == 1 || state == 2) && menuYCoord > 0) {
             state = 2;
@@ -79,6 +64,7 @@ public class EmployeeMenuButtonScript : MonoBehaviour
         else if (state == 3 && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.95) {
             animator.Play(open.name);
             state = 4;
+            closeEmployeeMenuButton.gameObject.SetActive(true);
             EmployeeMenuPagination.Init();
         }
 
@@ -87,6 +73,7 @@ public class EmployeeMenuButtonScript : MonoBehaviour
             EmployeeMenuPagination.Close();
             animator.Play(closing.name);
             state = 6;
+            closeEmployeeMenuButton.gameObject.SetActive(false);
         }
         else if (state == 6 && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.95) {
             animator.Play(closed.name);
@@ -97,6 +84,7 @@ public class EmployeeMenuButtonScript : MonoBehaviour
         }
         else if (state == 7) {
             state = 0;
+            playerMovement.movementEnabled = true;
         }
     }
 }
