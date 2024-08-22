@@ -13,14 +13,11 @@ public class EmployeeMenuPagination : MonoBehaviour
     public GameObject leftPage;
     public GameObject rightPage;
     public HandbookEmployeesBlurbs handbookEmployeesBlurbs;
-    // public static Button leftButtonStatic;
-    // public static Button rightButtonStatic;
-    private static List<TextMeshProUGUI> pages;
-    private static int activeLeft; // The page number of the active left page.
+    private int activeIndex; // The index of the employee currently in the top left.
 
     void Start()
     {
-        activeLeft = 1;
+        activeIndex = 0;
 
         leftButton.onClick.AddListener(OnLeftButtonClick);
         rightButton.onClick.AddListener(OnRightButtonClick);
@@ -32,57 +29,67 @@ public class EmployeeMenuPagination : MonoBehaviour
         rightPage.gameObject.SetActive(true);
     }
 
+    public void GenerateSingleAndTransform(int i, int x, int y, GameObject page) {
+        GameObject item = handbookEmployeesBlurbs.generateEmployeeBlurb(i);
+        if (item == null) {
+            throw new System.Exception("Item doesn't exist.");
+        }
+        RectTransform transform = item.transform as RectTransform;
+        transform.SetParent(page.transform, false);
+        Vector2 newPos = transform.anchoredPosition;
+        newPos.x += x;
+        newPos.y += y;
+        transform.anchoredPosition = newPos;
+    }
+
+    private void ClearAllPages() {
+        foreach (Transform child in leftPage.transform) {
+            if (child.tag != "DontDelete") { // Don't delete the tagged exemplar.
+                Destroy(child.gameObject);
+            }
+        }
+        foreach (Transform child in rightPage.transform) {Destroy(child.gameObject);}
+    }
+
+    private void GenerateAllFromIndex() {
+        ClearAllPages();
+        
+        try {
+            GenerateSingleAndTransform(activeIndex, 0, 0, leftPage); // Top left
+            GenerateSingleAndTransform(activeIndex+1, 0, 400, leftPage); // Bottom left
+            GenerateSingleAndTransform(activeIndex+2, 300, 0, rightPage); // Top right
+            GenerateSingleAndTransform(activeIndex+3, 300, 400, rightPage); // Bottom right
+            return;
+        } catch {return;}
+    }
+
     public void Init() {
-        handbookEmployeesBlurbs.generateEmployeeBlurb(0).transform.SetParent(leftPage.transform, false);
-        RectTransform secondItem = handbookEmployeesBlurbs.generateEmployeeBlurb(1).transform as RectTransform;
-        secondItem.SetParent(leftPage.transform, false);
-        Vector2 newPos = secondItem.anchoredPosition;
-        newPos.y += 400;
-        secondItem.anchoredPosition = newPos;
+        activeIndex = 0;
+        GenerateAllFromIndex();
 
         leftButton.gameObject.SetActive(true);
         rightButton.gameObject.SetActive(true);
     }
 
     public void Close() {
-        // SetPageActivity(activeLeft, false);
-        if (activeLeft < pages.Count) {
-            // SetPageActivity(activeLeft+1, false);
-        }
+        ClearAllPages();
         leftButton.gameObject.SetActive(false);
         rightButton.gameObject.SetActive(false);
     }
 
-    // private static void SetPageActivity(int pageNum, bool activity) {
-    //     pages[pageNum-1].enabled = activity;
-    //     pages[pageNum-1].gameObject.SetActive(activity);
-    // }
-
     // Flip to the left.
     private void OnLeftButtonClick() {
-        if (activeLeft == 1) {
-            return;
+        if (handbookEmployeesBlurbs.indexInRange(activeIndex-4)) {
+            activeIndex-=4;
+            GenerateAllFromIndex();
         }
-        // SetPageActivity(activeLeft, false);
-        if (activeLeft < pages.Count) {
-            // SetPageActivity(activeLeft+1, false);
-        }
-        // SetPageActivity(activeLeft-2, true);
-        // SetPageActivity(activeLeft-1, true);
-        activeLeft-=2;
     }
 
     // Flip to the right.
     private void OnRightButtonClick() {
-        if (activeLeft >= pages.Count - 1) {
-            return;
+        if (handbookEmployeesBlurbs.indexInRange(activeIndex+4)) {
+            activeIndex+=4;
+            GenerateAllFromIndex();
         }
-        // SetPageActivity(activeLeft, false);
-        // SetPageActivity(activeLeft+1,false);
-        // SetPageActivity(activeLeft+2, true);
-        if (activeLeft+3 <= pages.Count) {
-            // SetPageActivity(activeLeft+3, true);
-        }
-        activeLeft+=2;
     }
 }

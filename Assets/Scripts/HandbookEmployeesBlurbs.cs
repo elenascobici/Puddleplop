@@ -24,6 +24,8 @@ public class HandbookEmployeesBlurbs : MonoBehaviour
         employeeBlurb.transform.Find(fieldName).GetComponent<TextMeshProUGUI>().text = newFieldText;
     }
 
+    public bool indexInRange(int index) {return index < employees.Count && index >= 0;}
+
     /*
         Create and return a GameObject containing a blurb for the
         employee with the given index in the employees list. This
@@ -34,6 +36,7 @@ public class HandbookEmployeesBlurbs : MonoBehaviour
             EmployeeData employee = employees[index];
             GameObject employeeBlurb = Instantiate(exemplar);
             employeeBlurb.name = name;
+            employeeBlurb.tag = "Untagged";
 
             // Update the text fields in the blurb.
             UpdateField(employeeBlurb, "NameText", employee.name);
@@ -45,11 +48,11 @@ public class HandbookEmployeesBlurbs : MonoBehaviour
             RuntimeAnimatorController controller = Resources.Load<RuntimeAnimatorController>($"{employee.id}/{employee.anim}");
             Animator animator = employeeBlurb.transform.Find("CharacterImage").GetComponent<Animator>();
             animator.runtimeAnimatorController = controller;
+            print(employee.anim);
             animator.Play(employee.anim);
             
             return employeeBlurb;
-        } catch(Exception e) {
-            Debug.LogError("generateEmployeeBlurb exception: " + e.Message);
+        } catch (Exception _) {
             return null;
         };
     }
