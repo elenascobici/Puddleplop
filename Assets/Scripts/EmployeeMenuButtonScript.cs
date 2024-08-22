@@ -21,6 +21,7 @@ public class EmployeeMenuButtonScript : MonoBehaviour
     public Animator animator;
     public PlayerMovement playerMovement;
     public int state;
+    public EmployeeMenuPagination employeeMenuPagination;
     void Start()
     {
         openEmployeeMenuButton.onClick.AddListener(() => {state = 1;});
@@ -65,12 +66,12 @@ public class EmployeeMenuButtonScript : MonoBehaviour
             animator.Play(open.name);
             state = 4;
             closeEmployeeMenuButton.gameObject.SetActive(true);
-            EmployeeMenuPagination.Init();
+            employeeMenuPagination.Init();
         }
 
         // Play book closing animations step by step.
         if (state == 5) {
-            EmployeeMenuPagination.Close();
+            employeeMenuPagination.Close();
             animator.Play(closing.name);
             state = 6;
             closeEmployeeMenuButton.gameObject.SetActive(false);

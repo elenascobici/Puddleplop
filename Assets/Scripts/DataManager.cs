@@ -8,9 +8,13 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using Newtonsoft.Json;
 
+/*
+    A class representing the coordinates of a 2D tile. Used by the
+    UserData class to represent an array of tiles which are
+    currently soil tiles.
+*/
 [Serializable]
-public class Tile
-{
+public class Tile {
     public int x;
     public int y;
     public Tile(int x, int y) {
@@ -19,19 +23,47 @@ public class Tile
     }
 }
 
+/*
+    A class representing the data specific to the player.
+*/
 [Serializable]
-public class UserData
-{
+public class UserData {
     public int coins = 0;
     public int xpLevel = 1;
     public int xpPoints = 1;
     public List<Tile> tiles = new List<Tile>();
 }
 
+/*
+    A class representing information about one employee frog.
+*/
+[Serializable]
+public class EmployeeData {
+    public string id;
+    public string name;
+    public string desc;
+    public int cost;
+    public string anim; // Idle animation.
+    public bool unlocked = false;
+    public bool owned = false;
+}
+
+/*
+    Stores the list of employee datas. Cannot be done in a more
+    succint way since Unity does not support Arrays as JSON
+    objects, hence a redundant outermost object is needed.
+*/
+[Serializable]
+public class EmployeesData {
+    public List<EmployeeData> employeesList;
+}
+
 public class DataManager : MonoBehaviour {
     public static DataManager Instance { get; private set;}
-    private const string FILEPATH = "Assets/Data/userdata.json";
+    private const string USER_DATA_FILE_PATH = "Assets/Data/userdata.json";
+    private const string EMPLOYEE_DATA_FILE_PATH = "Assets/Data/employeedata.json";
     private UserData userData;
+    private EmployeesData employeesData;
     private void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -41,25 +73,31 @@ public class DataManager : MonoBehaviour {
         }
     }
     void Start() {
-        LoadUserData();
+        userData = LoadData<UserData>(USER_DATA_FILE_PATH);
+        employeesData = LoadData<EmployeesData>(EMPLOYEE_DATA_FILE_PATH);
+        print(employeesData);
     }
     private string ConvertToJson() {
         return JsonUtility.ToJson(userData);
     }
-    private UserData ConvertFromJson(string json) {
-        return JsonUtility.FromJson<UserData>(json);
+    private T ConvertFromJson<T>(string json) {
+        return JsonUtility.FromJson<T>(json);
     }
     public void SaveUserData() {
-        File.WriteAllText(FILEPATH, ConvertToJson());
+        File.WriteAllText(USER_DATA_FILE_PATH, ConvertToJson());
     }
-    private void LoadUserData() {
-        if (File.Exists(FILEPATH)) {
-            userData = ConvertFromJson(File.ReadAllText(FILEPATH));
-        } else {
-            userData = new UserData();
-        }
+    private T LoadData<T>(string filePath) {
+        if (File.Exists(filePath)) {
+            print("found file: " + filePath);
+            return ConvertFromJson<T>(File.ReadAllText(filePath));
+        } 
+        return Activator.CreateInstance<T>();
     }
     public UserData GetUserData() {
         return userData;
+    }
+
+    public List<EmployeeData> GetEmployeesData() {
+        return employeesData.employeesList;
     }
 }

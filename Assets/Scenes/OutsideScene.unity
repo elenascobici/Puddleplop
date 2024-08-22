@@ -603,6 +603,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5bbfddf39229004fa53b290f4c3ce18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  movementEnabled: 0
 --- !u!61 &444283172
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -871,7 +872,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdd96f36928ee314e9b2e9bfb08f3522, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  userData: {fileID: 386748891}
+  userData:
+    coins: 0
+    xpLevel: 0
+    xpPoints: 0
+    tiles: []
+  dataManager: {fileID: 0}
   coinCount: {fileID: 1684427554}
   xpLevel: {fileID: 353187207}
   xpBarAnimator: {fileID: 1197699672}
@@ -1044,6 +1050,7 @@ GameObject:
   - component: {fileID: 1197699670}
   - component: {fileID: 1197699671}
   - component: {fileID: 1197699672}
+  - component: {fileID: 1197699673}
   m_Layer: 0
   m_Name: XpBar
   m_TagString: Untagged
@@ -1141,6 +1148,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1197699673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197699669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35637c0990362204993356de9788bcc8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  xPMask: {fileID: 1034287504}
 --- !u!1 &1231875862
 GameObject:
   m_ObjectHideFlags: 0
@@ -5610,9 +5630,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   groundEditButtonScript: {fileID: 1430418236}
-  userData: {fileID: 386748891}
-  groundData:
-    soilTiles: []
   frog: {fileID: 444283164}
   soilTile: {fileID: 11400000, guid: 1bc02aff8b1373842a8d4ea99001ebb7, type: 2}
   tileMap: {fileID: 2028085729}
