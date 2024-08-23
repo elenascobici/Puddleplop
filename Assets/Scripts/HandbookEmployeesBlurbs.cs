@@ -28,6 +28,8 @@ public class HandbookEmployeesBlurbs : MonoBehaviour
             .onClick.AddListener(() => {print("close"); employPopup.transform.localScale = new Vector2(0, 0);});
         employPopup.transform.Find("CancelButton").GetComponent<Button>()
             .onClick.AddListener(() => {employPopup.transform.localScale = new Vector2(0, 0);});
+        employPopup.transform.Find("EmployText").GetComponent<TextMeshProUGUI>()
+            .text = $"Would you like to employ {employee.name} for {employee.cost} coins?";
     }
 
     private void UpdateField(GameObject employeeBlurb, string fieldName, string newFieldText) {
