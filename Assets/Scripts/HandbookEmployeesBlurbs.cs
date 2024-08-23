@@ -10,6 +10,7 @@ using UnityEngine.UI;
 public class HandbookEmployeesBlurbs : MonoBehaviour
 {
     public GameObject exemplar;
+    public GameObject employPopup;
     private DataManager dataManager;
     private List<EmployeeData> employees;
     
@@ -17,7 +18,16 @@ public class HandbookEmployeesBlurbs : MonoBehaviour
     {
         dataManager = DataManager.Instance;
         employees = dataManager.GetEmployeesData();
-        exemplar.SetActive(false); 
+        exemplar.SetActive(false);
+        employPopup.transform.localScale = new Vector2(0, 0);
+    }
+
+    private void OnEmployClicked(EmployeeData employee, GameObject employeeBlurb) {
+        employPopup.transform.localScale = new Vector2(1, 1);
+        employPopup.transform.Find("YesButton").GetComponent<Button>()
+            .onClick.AddListener(() => {print("close"); employPopup.transform.localScale = new Vector2(0, 0);});
+        employPopup.transform.Find("CancelButton").GetComponent<Button>()
+            .onClick.AddListener(() => {employPopup.transform.localScale = new Vector2(0, 0);});
     }
 
     private void UpdateField(GameObject employeeBlurb, string fieldName, string newFieldText) {
@@ -41,7 +51,7 @@ public class HandbookEmployeesBlurbs : MonoBehaviour
             // Update the text fields in the blurb.
             UpdateField(employeeBlurb, "NameText", employee.name);
             UpdateField(employeeBlurb, "DescText", employee.desc);
-            UpdateField(employeeBlurb, "CostText", employee.cost.ToString());
+            UpdateField(employeeBlurb, "CostText", employee.cost == 0 ? "FREE" : employee.cost.ToString());
 
             // Update the animation loop for the character thumbnail.
             employeeBlurb.gameObject.SetActive(true);
@@ -50,6 +60,9 @@ public class HandbookEmployeesBlurbs : MonoBehaviour
             animator.runtimeAnimatorController = controller;
             print(employee.anim);
             animator.Play(employee.anim);
+
+            // Add a listener to the blurb's employ button.
+            employeeBlurb.transform.Find("EmployButton").GetComponent<Button>().onClick.AddListener(() => {OnEmployClicked(employee, employeeBlurb);});
             
             return employeeBlurb;
         } catch (Exception _) {

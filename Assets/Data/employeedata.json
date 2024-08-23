@@ -26,24 +26,6 @@
             "anim": "LilypadBlinking",
             "unlocked": false,
             "owned": false
-        },
-        {
-            "id": "MrPlop",
-            "name": "Mr. Plop",
-            "desc": "Puddleplop's dad! Used to own the cafe, but needs some help now that he's older.",
-            "cost": 0,
-            "anim": "MrPlopYawn",
-            "unlocked": false,
-            "owned": false
-        },
-        {
-            "id": "Toofy",
-            "name": "Toofy",
-            "desc": "A hard and precise worker, albeit a bit awkward and shy at times.",
-            "cost": 150,
-            "anim": "ToofyBounce",
-            "unlocked": false,
-            "owned": false
         }
     ]
 }

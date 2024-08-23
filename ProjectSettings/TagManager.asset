@@ -13,7 +13,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Popup
   - 
   - 
   - 
@@ -40,6 +40,15 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Back
+    uniqueID: 534029531
+    locked: 0
+  - name: Frog
+    uniqueID: 3536753749
+    locked: 0
+  - name: Book
+    uniqueID: 1973085271
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

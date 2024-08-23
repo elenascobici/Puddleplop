@@ -75,7 +75,6 @@ public class DataManager : MonoBehaviour {
     void Start() {
         userData = LoadData<UserData>(USER_DATA_FILE_PATH);
         employeesData = LoadData<EmployeesData>(EMPLOYEE_DATA_FILE_PATH);
-        print(employeesData);
     }
     private string ConvertToJson() {
         return JsonUtility.ToJson(userData);
@@ -88,7 +87,6 @@ public class DataManager : MonoBehaviour {
     }
     private T LoadData<T>(string filePath) {
         if (File.Exists(filePath)) {
-            print("found file: " + filePath);
             return ConvertFromJson<T>(File.ReadAllText(filePath));
         } 
         return Activator.CreateInstance<T>();
