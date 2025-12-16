@@ -80,7 +80,7 @@ class Frog(pygame.sprite.Sprite):
         )
         self.rect = self.image.get_rect(topleft=(game_state.world_width / 2, game_state.world_height / 2))
     
-    def update(self, keys, world_width, world_height, dt):
+    def update(self, keys, dt):
         """Update the frog's position and animation.
         
         Args:
@@ -121,8 +121,8 @@ class Frog(pygame.sprite.Sprite):
         self.pos += velocity * self.speed * dt
         
         # Keep the frog within world bounds
-        self.pos.x = max(0, min(world_width - game_state.frog_width, self.pos.x))
-        self.pos.y = max(0, min(world_height - game_state.frog_height, self.pos.y))
+        self.pos.x = max(0, min(game_state.world_width - game_state.frog_width, self.pos.x))
+        self.pos.y = max(0, min(game_state.world_height - game_state.frog_height, self.pos.y))
         
         # Update animation
         if self.direction != self.last_direction:

@@ -2,9 +2,11 @@
 Shared game state module for managing global game variables.
 """
 
+from shared_types import Scenes
+
 class GameState:
     """Manages shared state variables across different game modules."""
-    
+
     def __init__(self):
         """Initialize game state."""
         # Tool states
@@ -13,14 +15,14 @@ class GameState:
         
         # Drag state
         self.is_dragging = False
-        self.drag_action = None  # "to_soil" or "to_grass"
+        self.drag_action = None  # TO_SOIL or TO_GRASS
         
         # Screen configuration
         self.base_width = 1280
         self.base_height = 720
         self.camera_width = 400
         self.camera_height = 240
-        self.world_width = 736
+        self.world_width = 480
         self.world_height = 240
         self.tile_size = 16
         self.num_tiles_x = self.world_width // self.tile_size
@@ -29,6 +31,9 @@ class GameState:
 
         # Player info
         self.frog_width, self.frog_height = 16, 16
+
+        # Scene state
+        self.current_scene = Scenes.OUTSIDE
     
     def set_base_size(self, base_width, base_height):
         """Update the base game dimensions.
@@ -74,7 +79,7 @@ class GameState:
         """Start a drag operation.
         
         Args:
-            action: "to_soil" to convert tiles to soil, "to_grass" to convert to grass
+            action: TO_SOIL to convert tiles to soil, TO_GRASS to convert to grass
         """
         self.is_dragging = True
         self.drag_action = action

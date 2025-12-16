@@ -2,6 +2,7 @@ import pygame
 import random
 from save import load, save
 from game_state import game_state
+from shared_types import DragAction
 
 
 class Ground(pygame.sprite.Sprite):
@@ -29,11 +30,6 @@ class Ground(pygame.sprite.Sprite):
     
     def __init__(self):
         """Initialize the ground sprite.
-        
-        Args:
-            world_width: Width of the world in pixels
-            world_height: Height of the world in pixels
-            tile_size: Size of each tile in pixels (default 16x16)
         """
         super().__init__()
         
@@ -92,7 +88,7 @@ class Ground(pygame.sprite.Sprite):
     def _generate_grass_tiles(self):
         """Generate random grass tiles with 70% chance of tile 0, 30% chance of others."""
         grass_tiles = []
-        for _ in range(self.total_tiles):
+        for _ in range(game_state.total_tiles):
             grass_tiles.append(self._random_grass_tile())
         return grass_tiles
     
@@ -218,7 +214,7 @@ class Ground(pygame.sprite.Sprite):
         
         Args:
             world_pos: Tuple of (x, y) world coordinates
-            action: "to_soil" to convert to soil, "to_grass" to convert to grass, 
+            action: TO_SOIL to convert to soil, TO_GRASS to convert to grass, 
                    or None to toggle based on current tile
         """
         # Convert world position to tile index
@@ -233,12 +229,12 @@ class Ground(pygame.sprite.Sprite):
         tile_idx = tile_y * game_state.num_tiles_x + tile_x
         
         # Determine what to do based on action or current tile
-        if action == "to_soil":
+        if action == DragAction.TO_SOIL:
             # Convert to soil if not already soil
             if tile_idx not in self.soil_tiles:
                 self.soil_tiles.add(tile_idx)
                 self._update_affected_tiles(tile_idx)
-        elif action == "to_grass":
+        elif action == DragAction.TO_GRASS:
             # Convert to grass if not already grass
             if tile_idx in self.soil_tiles:
                 self.soil_tiles.remove(tile_idx)

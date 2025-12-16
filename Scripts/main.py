@@ -4,11 +4,13 @@ Main game loop for the Frog game with camera functionality.
 import pygame
 from frog import Frog, extract_frames
 from ground import Ground
+from shop_outside import ShopOutside
 from hoe import Hoe
 from seed_satchel import SeedSatchel
 from stats import CoinBar, XpBar
 from save import load
 from game_state import game_state
+from shared_types import DragAction, Scenes
 
 # Pygame setup
 pygame.init()
@@ -34,6 +36,10 @@ all_sprites.add(ground)
 # Create the frog player
 player = Frog()
 all_sprites.add(player)
+
+# Create the shop outside
+shop_outside = ShopOutside()
+all_sprites.add(shop_outside)
 
 # Create the hoe icon
 hoe_icon = Hoe(icon_size=32)
@@ -127,18 +133,18 @@ while running:
                 world_pos = (camera_x + world_x, camera_y + world_y)
                 
                 # Determine what tile was clicked
-                tile_x = int(world_pos[0] // ground.tile_size)
-                tile_y = int(world_pos[1] // ground.tile_size)
+                tile_x = int(world_pos[0] // game_state.tile_size)
+                tile_y = int(world_pos[1] // game_state.tile_size)
                 
                 # Check bounds
-                if 0 <= tile_x < ground.tiles_wide and 0 <= tile_y < ground.tiles_high:
-                    tile_idx = tile_y * ground.tiles_wide + tile_x
+                if 0 <= tile_x < game_state.num_tiles_x and 0 <= tile_y < game_state.num_tiles_y:
+                    tile_idx = tile_y * game_state.num_tiles_x + tile_x
                     
                     # Determine action based on whether tile is soil or grass
                     if tile_idx in ground.soil_tiles:
-                        action = "to_grass"
+                        action = DragAction.TO_GRASS
                     else:
-                        action = "to_soil"
+                        action = DragAction.TO_SOIL
                     
                     # Start drag with the determined action
                     game_state.start_drag(action)
@@ -155,11 +161,14 @@ while running:
 
     # Create a game surface at base resolution
     game_surface = pygame.Surface((game_state.base_width, game_state.base_height))
-    game_surface.fill("purple")
 
     # Handle input and update player
     keys = pygame.key.get_pressed()
-    player.update(keys, game_state.world_width, game_state.world_height, dt)
+    player.update(keys, dt)
+
+    # Check if player is colliding with shop outside
+    if shop_outside.rect.colliderect(player.rect):
+        game_state.current_scene = Scenes.SHOP
 
     # Update ground dragging if hoe is being dragged
     if game_state.is_dragging_hoe():
@@ -180,23 +189,30 @@ while running:
     scale_x = game_state.base_width / game_state.camera_width
     scale_y = game_state.base_height / game_state.camera_height
 
-    # Draw the ground tiles relative to the camera
-    ground_screen_x = (0 - camera_x) * scale_x
-    ground_screen_y = (0 - camera_y) * scale_y
-    scaled_ground = pygame.transform.scale(ground.image, (int(game_state.world_width * scale_x), int(game_state.world_height * scale_y)))
-    game_surface.blit(scaled_ground, (ground_screen_x, ground_screen_y))
+    if (game_state.current_scene == Scenes.OUTSIDE):
+        # Draw the ground tiles relative to the camera
+        ground_screen_x = (0 - camera_x) * scale_x
+        ground_screen_y = (0 - camera_y) * scale_y
+        scaled_ground = pygame.transform.scale(ground.image, (int(game_state.world_width * scale_x), int(game_state.world_height * scale_y)))
+        game_surface.blit(scaled_ground, (ground_screen_x, ground_screen_y))
+
+        # Draw the shop outside sprite relative to the camera
+        shop_outside_screen_x = (0 - camera_x) * scale_x
+        shop_outside_screen_y = (0 - camera_y) * scale_y
+        scaled_shop_outside = pygame.transform.scale(shop_outside.image, (int(shop_outside.image.get_width() * scale_x), int(shop_outside.image.get_height() * scale_y)))
+        game_surface.blit(scaled_shop_outside, (shop_outside_screen_x, shop_outside_screen_y))
+
+        # Draw the hoe icon (fixed to screen, not affected by camera)
+        game_surface.blit(hoe_icon.image, hoe_icon.rect)
+
+        # Draw the seed satchel icon (fixed to screen, not affected by camera)
+        game_surface.blit(satchel_icon.image, satchel_icon.rect)
 
     # Draw the frog sprite relative to the camera
     frog_screen_x = (player.pos.x - camera_x) * scale_x
     frog_screen_y = (player.pos.y - camera_y) * scale_y
     scaled_sprite = pygame.transform.scale(player.image, (int(game_state.frog_width * scale_x), int(game_state.frog_height * scale_y)))
     game_surface.blit(scaled_sprite, (frog_screen_x, frog_screen_y))
-
-    # Draw the hoe icon (fixed to screen, not affected by camera)
-    game_surface.blit(hoe_icon.image, hoe_icon.rect)
-
-    # Draw the seed satchel icon (fixed to screen, not affected by camera)
-    game_surface.blit(satchel_icon.image, satchel_icon.rect)
 
     # Draw the stat bars (fixed to screen, not affected by camera)
     game_surface.blit(coin_bar.image, coin_bar.rect)
