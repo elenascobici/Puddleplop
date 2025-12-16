@@ -1,1 +1,2 @@
-A 16-bit Unity game about a little gardener frog.
+A 16-bit Pygame game about a little frog who runs a bakery (that's
+you!).
