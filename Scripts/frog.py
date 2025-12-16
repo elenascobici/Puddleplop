@@ -3,20 +3,7 @@ A module defining the Frog (player) sprite for the game.
 """
 import pygame
 from game_state import game_state
-
-
-def extract_frames(sheet, rows, cols, total_frames):
-    """Extract all frames from a spritesheet grid."""
-    frames = []
-    for row in range(rows):
-        for col in range(cols):
-            x = col * game_state.frog_width
-            y = row * game_state.frog_height
-            frame = sheet.subsurface((x, y, game_state.frog_width, game_state.frog_height))
-            frames.append(frame)
-            if len(frames) >= total_frames:
-                return frames
-    return frames
+from shared import extract_frames
 
 class Frog(pygame.sprite.Sprite):
     """A sprite class for the frog player character."""
@@ -42,9 +29,9 @@ class Frog(pygame.sprite.Sprite):
         side_sheet = pygame.image.load(r"..\Assets\Characters\Frog\FrogSpritesheetSide.png").convert_alpha()
 
         self.all_frames = {
-            "front": extract_frames(front_sheet, 5, 5, 22),
-            "back": extract_frames(back_sheet, 4, 4, 15),
-            "side": extract_frames(side_sheet, 4, 4, 16),
+            "front": extract_frames(front_sheet, 5, 5, 22, game_state.frog_width, game_state.frog_height),
+            "back": extract_frames(back_sheet, 4, 4, 15, game_state.frog_width, game_state.frog_height),
+            "side": extract_frames(side_sheet, 4, 4, 16, game_state.frog_width, game_state.frog_height),
         }
 
         # Define animation frames for each direction

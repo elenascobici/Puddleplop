@@ -2,7 +2,7 @@
 Shared game state module for managing global game variables.
 """
 
-from shared_types import Scenes
+from shared import Scenes
 
 class GameState:
     """Manages shared state variables across different game modules."""
@@ -16,6 +16,9 @@ class GameState:
         # Drag state
         self.is_dragging = False
         self.drag_action = None  # TO_SOIL or TO_GRASS
+
+        # Employee menu state
+        self.employee_menu_open = False
         
         # Screen configuration
         self.base_width = 1280
@@ -115,6 +118,13 @@ class GameState:
             self.world_width = 400
             self.world_height = 240
             
+    def toggle_employee_menu(self):
+        """Placeholder for toggling employee menu state."""
+        # Implementation would go here
+        if self.employee_menu_open == False:
+            self.employee_menu_open = True
+        else:
+            self.employee_menu_open = False
 
 
 # Global game state instance

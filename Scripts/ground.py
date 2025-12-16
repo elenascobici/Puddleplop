@@ -2,7 +2,7 @@ import pygame
 import random
 from save import load, save
 from game_state import game_state
-from shared_types import DragAction
+from shared import DragAction
 
 
 class Ground(pygame.sprite.Sprite):
