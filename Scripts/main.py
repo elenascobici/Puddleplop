@@ -5,6 +5,7 @@ import pygame
 from frog import Frog, extract_frames
 from ground import Ground
 from shop_outside import ShopOutside
+from shop_door import ShopDoor
 from hoe import Hoe
 from seed_satchel import SeedSatchel
 from stats import CoinBar, XpBar
@@ -26,8 +27,9 @@ dt = 0
 # Load player data from save file
 player_data = load()
 
-# Create sprite group
+# Create sprite groups
 all_sprites = pygame.sprite.Group()
+switch_scene_sprites = pygame.sprite.Group()
 
 # Create the ground
 ground = Ground()
@@ -40,12 +42,21 @@ all_sprites.add(player)
 # Create the shop outside
 shop_outside = ShopOutside()
 all_sprites.add(shop_outside)
+switch_scene_sprites.add(shop_outside)
+
+# Creat the shop door leading outside
+shop_door = ShopDoor()
+all_sprites.add(shop_door)
+switch_scene_sprites.add(shop_door)
 
 # Create the hoe icon
 hoe_icon = Hoe(icon_size=32)
 
 # Create the seed satchel icon
 satchel_icon = SeedSatchel(icon_size=32)
+
+outside_sprites = [ground, shop_outside, hoe_icon, satchel_icon]
+shop_sprites = [shop_door]
 
 # Create the stat bars
 coin_bar = CoinBar(screen.get_width(), coins=player_data.get("coins", 0))
@@ -166,9 +177,27 @@ while running:
     keys = pygame.key.get_pressed()
     player.update(keys, dt)
 
-    # Check if player is colliding with shop outside
-    if shop_outside.rect.colliderect(player.rect):
-        game_state.current_scene = Scenes.SHOP
+    # Check if player is entering a new scene
+    if pygame.sprite.spritecollideany(player, switch_scene_sprites):
+        if player.rect.colliderect(shop_outside.rect):
+            for item in outside_sprites: item.kill()
+            for item in shop_sprites: item.add(all_sprites, switch_scene_sprites)
+
+            game_state.set_scene(Scenes.SHOP)
+            player.set_position(game_state.camera_width - 50, game_state.camera_height)
+            player.velocity = pygame.math.Vector2(0, 0)
+            player.current_frame = 0
+            player.last_direction = "front" 
+        elif player.rect.colliderect(shop_door.rect):
+            for item in outside_sprites: item.add(all_sprites, switch_scene_sprites)
+            for item in shop_sprites: item.kill()
+
+            game_state.set_scene(Scenes.OUTSIDE)
+            player.set_position(game_state.world_width / 2, game_state.world_height / 2)
+            player.velocity = pygame.math.Vector2(0, 0)
+            player.current_frame = 0
+            player.last_direction = "front" 
+            
 
     # Update ground dragging if hoe is being dragged
     if game_state.is_dragging_hoe():
@@ -189,24 +218,32 @@ while running:
     scale_x = game_state.base_width / game_state.camera_width
     scale_y = game_state.base_height / game_state.camera_height
 
-    if (game_state.current_scene == Scenes.OUTSIDE):
-        # Draw the ground tiles relative to the camera
-        ground_screen_x = (0 - camera_x) * scale_x
-        ground_screen_y = (0 - camera_y) * scale_y
-        scaled_ground = pygame.transform.scale(ground.image, (int(game_state.world_width * scale_x), int(game_state.world_height * scale_y)))
-        game_surface.blit(scaled_ground, (ground_screen_x, ground_screen_y))
+    def render_to_scale(object):
+        """Helper to render an object to the game surface with scaling."""
+        screen_x = (object.rect.x - camera_x) * scale_x
+        screen_y = (object.rect.y - camera_y) * scale_y
+        scaled_image = pygame.transform.scale(object.image, (int(object.rect.width * scale_x), int(object.rect.height * scale_y)))
+        game_surface.blit(scaled_image, (screen_x, screen_y))
 
-        # Draw the shop outside sprite relative to the camera
-        shop_outside_screen_x = (0 - camera_x) * scale_x
-        shop_outside_screen_y = (0 - camera_y) * scale_y
-        scaled_shop_outside = pygame.transform.scale(shop_outside.image, (int(shop_outside.image.get_width() * scale_x), int(shop_outside.image.get_height() * scale_y)))
-        game_surface.blit(scaled_shop_outside, (shop_outside_screen_x, shop_outside_screen_y))
+    if game_state.current_scene == Scenes.OUTSIDE:
+        render_to_scale(ground)
+        render_to_scale(shop_outside)
 
-        # Draw the hoe icon (fixed to screen, not affected by camera)
+        # Icons that are fixed on the screen
         game_surface.blit(hoe_icon.image, hoe_icon.rect)
-
-        # Draw the seed satchel icon (fixed to screen, not affected by camera)
         game_surface.blit(satchel_icon.image, satchel_icon.rect)
+    elif game_state.current_scene == Scenes.SHOP:
+        # Fill the shop interior with hardwood floor tiles
+        hardwood_floor = pygame.image.load(
+            r"..\Assets\Tiles\ShopInterior\HardwoodFloor.png"
+        ).convert_alpha()
+
+        for x in range(0, game_state.base_width, game_state.tile_size):
+            for y in range(0, game_state.base_height, game_state.tile_size):
+                game_surface.blit(hardwood_floor, (x, y))
+
+        # Draw the door leading back outside
+        render_to_scale(shop_door)
 
     # Draw the frog sprite relative to the camera
     frog_screen_x = (player.pos.x - camera_x) * scale_x

@@ -79,14 +79,22 @@ class Frog(pygame.sprite.Sprite):
             (game_state.frog_width, game_state.frog_height)
         )
         self.rect = self.image.get_rect(topleft=(game_state.world_width / 2, game_state.world_height / 2))
+
+    def set_position(self, x, y):
+        """Set the frog's position in world coordinates."""
+        self.pos.x = x
+        self.pos.y = y
+        
+        # Reset to avoid wonky behaviour when changing scenes
+        self.velocity = pygame.math.Vector2(0, 0)
+        self.current_frame = 0
+        self.last_direction = "front" 
     
     def update(self, keys, dt):
         """Update the frog's position and animation.
         
         Args:
             keys: pygame.key.get_pressed() result
-            world_width: Width of the world
-            world_height: Height of the world
             dt: Delta time in seconds
         """
         # Create velocity vector for movement

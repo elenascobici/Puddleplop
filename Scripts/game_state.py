@@ -96,6 +96,25 @@ class GameState:
     def get_drag_action(self):
         """Get the current drag action."""
         return self.drag_action
+    
+    def set_scene(self, scene):
+        """Set the current scene.
+        
+        Args:
+            scene: Scene enum value
+        """
+        self.current_scene = scene
+        if scene == Scenes.OUTSIDE:
+            self.camera_width = 400
+            self.camera_height = 240
+            self.world_width = 480
+            self.world_height = 240
+        elif scene == Scenes.SHOP:
+            self.camera_width = 400
+            self.camera_height = 240
+            self.world_width = 400
+            self.world_height = 240
+            
 
 
 # Global game state instance
