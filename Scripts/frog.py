@@ -84,6 +84,8 @@ class Frog(pygame.sprite.Sprite):
             keys: pygame.key.get_pressed() result
             dt: Delta time in seconds
         """
+        if not game_state.frog_moving_enabled:
+            return
         # Create velocity vector for movement
         velocity = pygame.Vector2(0, 0)
         moving = False

@@ -36,6 +36,7 @@ class GameState:
 
         # Player info
         self.frog_width, self.frog_height = 16, 16
+        self.frog_moving_enabled = True
 
         # Scene state
         self.current_scene = Scenes.OUTSIDE
@@ -125,9 +126,18 @@ class GameState:
         # Implementation would go here
         if self.employee_menu_open == False:
             self.employee_menu_open = True
+            self.set_frog_moving_enabled(False)
         else:
             self.employee_menu_open = False
+            self.set_frog_moving_enabled(True)
 
+    def set_frog_moving_enabled(self, enabled):
+        """Enable or disable frog movement.
+        
+        Args:
+            enabled: Boolean to enable or disable movement
+        """
+        self.frog_moving_enabled = enabled
 
 # Global game state instance
 game_state = GameState()
