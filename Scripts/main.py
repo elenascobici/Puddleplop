@@ -283,6 +283,10 @@ while running:
         # Draw the employee menu icon fixed on the screen
         game_surface.blit(employee_menu_icon.image, employee_menu_icon.rect)
 
+    # Update and draw active sprites
+    if employee_menu_book.alive():
+        employee_menu_book.dimmer.fill((0, 0, 0, employee_menu_book.dim_alpha))
+        game_surface.blit(employee_menu_book.dimmer, (0, 0))
     active_sprites.update(dt)
     active_sprites.draw(game_surface)
 

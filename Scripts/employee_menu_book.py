@@ -33,27 +33,26 @@ class EmployeeMenuBook(pygame.sprite.Sprite):
             for frame in extract_frames(book_sheet, 1, 36, 36, 192, 128)
         ]
 
-        self.image = self.frames[0]
-        self.rect = self.image.get_rect()
-        target_y = (screen_height - self.rect.height) // 2  # Center vertically
-
         # Animation state
         self.state = self.SLIDE_IN
         self.frame_index = 0
         self.animation_speed = 60  # frames per second
         self.frame_timer = 0
 
-        # Initial image
+        # Positioning
         self.image = self.frames[0]
         self.rect = self.image.get_rect()
-
-        # Positioning
-        self.target_y = target_y
+        self.target_y = (screen_height - self.rect.height) // 2  # Center vertically
         self.rect.centerx = game_state.base_width // 2  # center horizontally (adjust as needed)
         self.rect.top = screen_height  # start off-screen bottom
 
         # Slide motion
         self.slide_speed = 500  # pixels per second
+
+        # Dimmer
+        self.max_dim_alpha = 128
+        self.dim_alpha = 0
+        self.dimmer = pygame.Surface((game_state.base_width, game_state.base_height), pygame.SRCALPHA)
 
     def update(self, dt):
         if self.state == self.SLIDE_IN:
@@ -72,10 +71,18 @@ class EmployeeMenuBook(pygame.sprite.Sprite):
         elif self.state == self.SLIDE_OUT:
             self._slide_out(dt)
 
+    def _update_dim(self, progress):
+        self.dim_alpha = int(self.max_dim_alpha * progress)
 
     def _slide_in(self, dt):
         """Slide the closed book upward onto the screen."""
         self.rect.y -= self.slide_speed * dt
+
+        slide_distance = self.start_y - self.target_y
+        progress = 1 - (self.rect.y - self.target_y) / slide_distance
+        progress = max(0, min(1, progress))
+
+        self._update_dim(progress)
 
         if self.rect.y <= self.target_y:
             self.rect.y = self.target_y
@@ -118,6 +125,12 @@ class EmployeeMenuBook(pygame.sprite.Sprite):
     def _slide_out(self, dt):
         """Slide the book downward off the screen."""
         self.rect.y += self.slide_speed * dt
+
+        slide_distance = self.start_y - self.target_y
+        progress = 1 - (self.rect.y - self.target_y) / slide_distance
+        progress = max(0, min(1, progress))
+
+        self._update_dim(progress)
 
         if self.rect.top >= game_state.base_height:
             self.kill()  # Remove the sprite from all groups
