@@ -25,6 +25,8 @@ class GameState:
         self.base_height = 720
         self.camera_width = 400
         self.camera_height = 240
+        self.scale_x = self.base_width / self.camera_width
+        self.scale_y = self.base_height / self.camera_height
         self.world_width = 480
         self.world_height = 240
         self.tile_size = 16

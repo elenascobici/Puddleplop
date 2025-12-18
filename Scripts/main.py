@@ -9,6 +9,7 @@ from shop_door import ShopDoor
 from hoe import Hoe
 from seed_satchel import SeedSatchel
 from employee_menu_icon import EmployeeMenuIcon
+from employee_menu_book import EmployeeMenuBook
 from stats import CoinBar, XpBar
 from save import load
 from game_state import game_state
@@ -30,7 +31,8 @@ player_data = load()
 
 # Create sprite groups
 all_sprites = pygame.sprite.Group()
-switch_scene_sprites = pygame.sprite.Group()
+switch_scene_sprites = pygame.sprite.Group() # Sprites that trigger scene switches
+active_sprites = pygame.sprite.Group() # Sprites that are actively being updated in the game loop
 
 # Create the ground
 ground = Ground()
@@ -58,6 +60,9 @@ satchel_icon = SeedSatchel(icon_size=32)
 
 # Create the employee menu icon
 employee_menu_icon = EmployeeMenuIcon(icon_size=48)
+
+# Create the employee menu book
+employee_menu_book = EmployeeMenuBook()
 
 outside_sprites = [ground, shop_outside, hoe_icon, satchel_icon]
 shop_sprites = [shop_door, employee_menu_icon]
@@ -98,9 +103,9 @@ def calculate_scale_and_offset(screen_w, screen_h, game_w, game_h):
 
 def render_to_scale(object):
     """Helper to render an object to the game surface with scaling."""
-    screen_x = (object.rect.x - camera_x) * scale_x
-    screen_y = (object.rect.y - camera_y) * scale_y
-    scaled_image = pygame.transform.scale(object.image, (int(object.rect.width * scale_x), int(object.rect.height * scale_y)))
+    screen_x = (object.rect.x - camera_x) * game_state.scale_x
+    screen_y = (object.rect.y - camera_y) * game_state.scale_y
+    scaled_image = pygame.transform.scale(object.image, (int(object.rect.width * game_state.scale_x), int(object.rect.height * game_state.scale_y)))
     game_surface.blit(scaled_image, (screen_x, screen_y))
 
 # Initial scale and offset calculation
@@ -179,6 +184,9 @@ while running:
                 # Check if employee menu icon was clicked
                 if employee_menu_icon.rect.collidepoint(adjusted_pos):
                     employee_menu_icon.on_click()
+                    if game_state.employee_menu_open:
+                        employee_menu_book.reset()
+                        active_sprites.add(employee_menu_book)
         elif event.type == pygame.MOUSEBUTTONUP and game_state.current_scene == Scenes.OUTSIDE:
             # End drag and save tiles
             if game_state.is_dragging_hoe():
@@ -235,8 +243,8 @@ while running:
     camera_y = max(0, min(game_state.world_height - game_state.camera_height, player.pos.y + game_state.frog_height / 2 - game_state.camera_height / 2))
 
     # Scale factor for world rendering (not affected by screen scaling)
-    scale_x = game_state.base_width / game_state.camera_width
-    scale_y = game_state.base_height / game_state.camera_height
+    game_state.scale_x = game_state.base_width / game_state.camera_width
+    game_state.scale_y = game_state.base_height / game_state.camera_height
 
     # Render background based on scene
     if game_state.current_scene == Scenes.OUTSIDE:
@@ -245,7 +253,7 @@ while running:
     elif game_state.current_scene == Scenes.SHOP:
         # Fill the shop interior with hardwood floor tiles
         scaled_hardwood_floor = pygame.transform.scale(
-            hardwood_floor,(int(hardwood_floor.get_width() * scale_x), int(hardwood_floor.get_height() * scale_y)))
+            hardwood_floor,(int(hardwood_floor.get_width() * game_state.scale_x), int(hardwood_floor.get_height() * game_state.scale_y)))
         tile_w, tile_h = scaled_hardwood_floor.get_size()
 
         for x in range(0, game_state.base_width, tile_w):
@@ -257,9 +265,9 @@ while running:
 
     # Render common elements (shown for all scenes)
     # Draw the frog sprite relative to the camera
-    frog_screen_x = (player.pos.x - camera_x) * scale_x
-    frog_screen_y = (player.pos.y - camera_y) * scale_y
-    scaled_sprite = pygame.transform.scale(player.image, (int(game_state.frog_width * scale_x), int(game_state.frog_height * scale_y)))
+    frog_screen_x = (player.pos.x - camera_x) * game_state.scale_x
+    frog_screen_y = (player.pos.y - camera_y) * game_state.scale_y
+    scaled_sprite = pygame.transform.scale(player.image, (int(game_state.frog_width * game_state.scale_x), int(game_state.frog_height * game_state.scale_y)))
     game_surface.blit(scaled_sprite, (frog_screen_x, frog_screen_y))
 
     # Draw the stat bars (fixed to screen, not affected by camera)
@@ -274,6 +282,9 @@ while running:
     elif game_state.current_scene == Scenes.SHOP:
         # Draw the employee menu icon fixed on the screen
         game_surface.blit(employee_menu_icon.image, employee_menu_icon.rect)
+
+    active_sprites.update(dt)
+    active_sprites.draw(game_surface)
 
     # Scale the game surface to fit the screen with letterboxing/pillarboxing
     scaled_game_surface = pygame.transform.scale(
